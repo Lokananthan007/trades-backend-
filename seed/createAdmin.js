@@ -15,12 +15,12 @@ const createAdmin = async () => {
     }
 
     const admin = new Admin({
-      username: "admin",     // default username
-      password: "admin123",  // will be hashed
+      username: "Vicky",     // default username
+      password: "Vicky@76136",  // will be hashed
     });
 
     await admin.save();
-    console.log("🚀 Default admin created: username=admin, password=admin123");
+    console.log("🚀 Default admin created: username=Vicky, password=Vicky@76136");
     process.exit();
   } catch (err) {
     console.error(err);

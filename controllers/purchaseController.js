@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Purchase = require("../models/purchase");
-const User = require("../models/user"); // 👈 import user mode
+const User = require("../models/User"); // 👈 import user mode
 
 // ✅ Utility: Check if today is weekend
 function isWeekend(date = new Date()) {
