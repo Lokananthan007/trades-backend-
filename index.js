@@ -10,7 +10,7 @@ dotenv.config();
 const app = express();
 
 // ✅ Enable CORS for frontend (adjust domain if deploying live)
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: "*", credentials: true }));
 
 // ✅ Middleware
 app.use(express.json());
