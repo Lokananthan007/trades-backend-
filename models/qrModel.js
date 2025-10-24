@@ -4,7 +4,8 @@ const qrSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     qrImage: { type: String, required: true }, // base64 image
-    status: { type: String, default: "Pending" }, // e.g. Pending, Approved
+    upiId: { type: String, required: true },   // ✅ new field
+    status: { type: String, default: "hide" }, // Pending, display, hide
   },
   { timestamps: true }
 );

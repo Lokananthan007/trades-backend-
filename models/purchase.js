@@ -12,6 +12,7 @@ const purchaseSchema = mongoose.Schema(
     invest: { type: Number, required: true },
     dailyIncome: { type: Number, required: true },
     totalIncome: { type: Number, required: true },
+    todayIncome: { type: Number, default: 0 }, // ✅ New field
     upiId: { type: String, required: true },
     claimType: { type: String, enum: ["Weekly", "Monthly", "90Day"], required: true },
     qrName: { type: String },

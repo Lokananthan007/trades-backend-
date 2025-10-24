@@ -1,9 +1,14 @@
 const Qr = require("../models/qrModel");
 const fs = require("fs");
 
-// ✅ Upload QR (save base64 directly in DB)
+// ✅ Upload QR with UPI ID
 const uploadQr = async (req, res) => {
   try {
+    const { name, upiId } = req.body;
+    if (!name || !upiId) {
+      return res.status(400).json({ message: "Name and UPI ID are required" });
+    }
+
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
@@ -12,17 +17,16 @@ const uploadQr = async (req, res) => {
     const mimeType = req.file.mimetype;
 
     const newQr = new Qr({
-      name: req.body.name,
+      name,
+      upiId,
       qrImage: `data:${mimeType};base64,${imgData}`,
     });
 
     await newQr.save();
-
-    // Delete temp file
     fs.unlinkSync(req.file.path);
 
     res.status(201).json({
-      message: "QR uploaded and saved successfully",
+      message: "QR uploaded successfully",
       data: newQr,
     });
   } catch (error) {
@@ -41,14 +45,14 @@ const getAllQrs = async (req, res) => {
   }
 };
 
-// ✅ Get one QR (latest or by ID)
+// ✅ Get one (latest) or by ID
 const getOneQr = async (req, res) => {
   try {
     let qr;
     if (req.params.id) {
       qr = await Qr.findById(req.params.id);
     } else {
-      qr = await Qr.findOne().sort({ createdAt: -1 }); // latest
+      qr = await Qr.findOne().sort({ createdAt: -1 });
     }
 
     if (!qr) return res.status(404).json({ message: "No QR found" });
@@ -59,7 +63,7 @@ const getOneQr = async (req, res) => {
   }
 };
 
-// ✅ Update QR status
+// ✅ Update Status
 const updateQrStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -74,15 +78,12 @@ const updateQrStatus = async (req, res) => {
   }
 };
 
-// ✅ Activate one QR (set others to "hide")
+// ✅ Activate one QR
 const activateQr = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // First, set all others to "hide"
     await Qr.updateMany({}, { status: "hide" });
-
-    // Then activate the selected one
     const qr = await Qr.findByIdAndUpdate(id, { status: "display" }, { new: true });
     if (!qr) return res.status(404).json({ message: "QR not found" });
 
@@ -105,11 +106,26 @@ const deleteQr = async (req, res) => {
   }
 };
 
+// ✅ Get displayed QR
+const getDisplayedQr = async (req, res) => {
+  try {
+    const qr = await Qr.findOne({ status: "display" });
+    if (!qr) return res.status(404).json({ message: "No QR set to display" });
+
+    res.status(200).json(qr);
+  } catch (error) {
+    console.error("Error fetching displayed QR:", error);
+    res.status(500).json({ message: error.message });
+    return res.status(404).json({ message: "No QR set to display" });
+  }
+};
+
 module.exports = {
   uploadQr,
   getAllQrs,
   getOneQr,
   updateQrStatus,
   activateQr,
-  deleteQr
+  deleteQr,
+  getDisplayedQr,
 };

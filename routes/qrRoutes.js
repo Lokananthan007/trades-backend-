@@ -6,23 +6,27 @@ const {
   getOneQr,
   updateQrStatus,
   activateQr,
-  deleteQr
+  deleteQr,
+  getDisplayedQr,
 } = require("../controllers/qrController");
 const upload = require("../middlewares/uploadMiddleware");
 
-// Upload QR
+// ✅ Upload QR
 router.post("/upload", upload.single("qrImage"), uploadQr);
 
-// Get all QRs
+// ✅ Get all QRs
 router.get("/", getAllQrs);
 
-// Get one QR (latest)
+// ✅ Get displayed QR — must be before /:id
+router.get("/displayed", getDisplayedQr);
+
+// ✅ Get one (latest)
 router.get("/one", getOneQr);
 
-// Get QR by ID
+// ✅ Get QR by ID
 router.get("/:id", getOneQr);
 
-// Update status
+// ✅ Update status
 router.patch("/status/:id", updateQrStatus);
 
 // ✅ Activate QR

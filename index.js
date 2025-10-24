@@ -28,14 +28,15 @@ app.use("/api/claims", require("./routes/claimRoutes"));
 // ✅ Static folder (for QR uploads/images)
 app.use("/uploads", express.static("uploads"));
 
-// ✅ Cron job: run every day at 12:00 AM
-cron.schedule("0 0 * * *", async () => {
-  try {
+// Runs every day at midnight (12:00 AM)
+cron.schedule(
+  "0 0 * * *",
+  async () => {
+    console.log("⏰ Running daily income update at 10:37 PM IST...");
     await updateIncomes();
-  } catch (err) {
-    console.error("❌ Error in cron job:", err.message);
-  }
-});
+  },
+  { timezone: "Asia/Kolkata" }
+);
 
 // ✅ Start server
 const PORT = process.env.PORT || 5001;
