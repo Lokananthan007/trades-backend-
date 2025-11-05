@@ -6,8 +6,9 @@ exports.registerUser = async (req, res) => {
   const { mobile, username, password } = req.body;
   try {
     const userExists = await User.findOne({ mobile });
-    if (userExists)
+    if (userExists) {
       return res.status(400).json({ message: "User already exists" });
+    }
 
     const user = await User.create({ mobile, username, password });
 

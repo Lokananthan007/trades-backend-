@@ -5,17 +5,15 @@ const cors = require("cors");
 const cron = require("node-cron");
 const { updateIncomes } = require("./controllers/purchaseController");
 
-dotenv.config();
+dotenv.config(); // ✅ Make sure this runs BEFORE using process.env
 
 const app = express();
 
-// ✅ Enable CORS for frontend (adjust domain if deploying live)
-app.use(cors({ origin: "*", credentials: true }));
-
 // ✅ Middleware
+app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 
-// ✅ Connect to MongoDB
+// ✅ Connect MongoDB
 connectDB();
 
 // ✅ Routes
@@ -25,21 +23,19 @@ app.use("/api/qr", require("./routes/qrRoutes"));
 app.use("/api/purchases", require("./routes/purchaseRoutes"));
 app.use("/api/claims", require("./routes/claimRoutes"));
 
-// ✅ Static folder (for QR uploads/images)
+// ✅ Static uploads folder
 app.use("/uploads", express.static("uploads"));
 
-// Runs every day at midnight (12:00 AM)
+// ✅ CRON job (daily at midnight)
 cron.schedule(
   "0 0 * * *",
   async () => {
-    console.log("⏰ Running daily income update at 10:37 PM IST...");
+    console.log("⏰ Running daily income update...");
     await updateIncomes();
   },
   { timezone: "Asia/Kolkata" }
 );
 
-// ✅ Start server
+// ✅ Start Server
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

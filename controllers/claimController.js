@@ -23,7 +23,6 @@ const saveClaim = asyncHandler(async (req, res) => {
   let eligible = false;
 
   if (purchase.claimType === "Weekly") {
-    // Count working days from last claim
     let current = new Date(lastClaim);
     let workingDays = 0;
     while (current < today) {
@@ -40,7 +39,6 @@ const saveClaim = asyncHandler(async (req, res) => {
 
   const amount = purchase.claimType === "Weekly" ? purchase.dailyIncome * 5 : purchase.dailyIncome * 30;
 
-  // Save claim
   const claim = await Claim.create({
     user: req.user._id,
     purchase: purchaseId,
@@ -50,7 +48,6 @@ const saveClaim = asyncHandler(async (req, res) => {
     amount,
   });
 
-  // Update lastClaimDate
   tracker.lastClaimDate = today;
   await tracker.save();
 
@@ -60,12 +57,14 @@ const saveClaim = asyncHandler(async (req, res) => {
 // ✅ Get all claim requests
 const getAllClaims = asyncHandler(async (req, res) => {
   const claims = await Claim.find()
-    .populate("user", "username mobile") // user info
-    .populate("purchase", "invest dailyIncome claimType qrName") // purchase info
+    .populate("user", "username mobile")
+    .populate("purchase", "invest dailyIncome claimType qrName")
     .sort({ createdAt: -1 });
 
   res.json(claims);
 });
+
+// ✅ Update claim status
 const updateClaimStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -83,7 +82,7 @@ const updateClaimStatus = asyncHandler(async (req, res) => {
   res.json({ message: "Claim status updated", claim });
 });
 
-// ✅ Get logged-in user's own claims
+// ✅ Get logged-in user's claims
 const getMyClaims = asyncHandler(async (req, res) => {
   const claims = await Claim.find({ user: req.user._id })
     .populate("user", "username mobile")
