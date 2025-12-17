@@ -70,3 +70,19 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// Get all registered users (Admin / Protected)
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({})
+      .select("username mobile createdAt")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      users,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
