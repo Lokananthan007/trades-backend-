@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const { protect } = require("../middlewares/authMiddleware");
-const { saveClaim, getAllClaims, updateClaimStatus, getMyClaims } = require("../controllers/claimController");
+const {
+  saveClaim,
+  getAllClaims,
+  updateClaimStatus,
+  getMyClaims,
+} = require("../controllers/claimController");
 
-// ✅ User's own claims
-router.get("/my", protect, getMyClaims);
-
-router.put("/:id/status", protect, updateClaimStatus); // update status
-
-router.post("/", protect, saveClaim); // <-- error points here
-
-// ✅ Get all claims (admin)
-router.get("/all", protect, getAllClaims);
+router.get("/my", protect, getMyClaims);       // ✅ USER
+router.post("/", protect, saveClaim);          // ✅ CREATE
+router.get("/all", protect, getAllClaims);     // ✅ ADMIN
+router.put("/:id/status", protect, updateClaimStatus);
 
 module.exports = router;
